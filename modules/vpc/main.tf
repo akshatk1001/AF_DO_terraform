@@ -9,9 +9,9 @@ terraform {
 
 locals {
   # Making sure passed in CIDR is /24
-  CIDR_mask_len = split("/", var.vpc_CIDR)[1]
+  CIDR_mask_len = tonumber(split("/", var.vpc_CIDR)[1])
   bits_to_add   = 24 - local.CIDR_mask_len
-  new_CIDR      = cidrsubnet(var.vpc_CIDR, local.bits_to_add, 0)
+  new_CIDR      = cidrsubnet(var.vpc_CIDR, local.bits_to_add, var.subnet_index)
 }
 
 resource "digitalocean_vpc" "vpc" {

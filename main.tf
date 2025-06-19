@@ -12,10 +12,13 @@ provider "digitalocean" {
 }
 
 module "vpc" {
-  source     = "./modules/vpc"
-  vpc_name   = var.vpc_name
-  vpc_region = var.region
-  vpc_CIDR   = var.CIDR
+  for_each = { for i in range(var.number_of_subnets) : i => i }
+
+  source       = "./modules/vpc"
+  vpc_name     = "${var.vpc_name}-vpc${each.key}"
+  vpc_region   = var.region
+  vpc_CIDR     = var.CIDR
+  subnet_index = each.key
 }
 
 resource "digitalocean_tag" "tag" {
@@ -23,15 +26,19 @@ resource "digitalocean_tag" "tag" {
 }
 
 module "drop" {
+  for_each = { for i in range(var.number_of_subnets) : i => i }
+
   source         = "./modules/droplet_creation"
   droplet_tag_id = digitalocean_tag.tag.id
   droplet_region = var.region
-  vpc_id         = module.vpc.vpc_id
-  droplet_name   = var.droplet_name
+  vpc_id         = module.vpc[each.key].vpc_id
+  droplet_name   = "${var.droplet_name}-subnet${each.key}"
 }
 
 module "firewall" {
+  for_each = { for i in range(var.number_of_subnets) : i => i }
+
   source     = "./modules/firewall"
-  vpc_name   = var.vpc_name
-  droplet_id = module.drop.droplet_id
+  vpc_name   = "${var.vpc_name}-subnet${each.key}"
+  droplet_id = module.drop[each.key].droplet_id
 }

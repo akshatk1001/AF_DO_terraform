@@ -14,3 +14,9 @@ variable "vpc_CIDR" {
   description = "CIDR for the virtual network (use /24 for subnet)"
   type        = string
 }
+
+variable "subnet_index" {
+  description = "Index for the subnet to create different /24 subnets from main CIDR"
+  type        = number
+  default     = 0
+}

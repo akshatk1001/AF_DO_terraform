@@ -15,6 +15,12 @@ variable "CIDR" {
   type        = string
 }
 
+variable "number_of_subnets" {
+  description = "Number of subnets to create (each will be a /24 subnet)"
+  type        = number
+  default     = 1
+}
+
 variable "droplet_tag" {
   description = "The tag for all droplets"
   type        = string
