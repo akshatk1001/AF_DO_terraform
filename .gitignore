@@ -1,2 +1,4 @@
 # Local .terraform directory (modules, plugins)
 .terraform/
+
+.DS_Store
